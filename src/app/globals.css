@@ -3,25 +3,57 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #faf7f2;
+  --bg-panel: #ffffff;
+  --ink: #1f2430;
+  --ink-soft: #5b6472;
+  --line: #e7e1d6;
+  --accent: #6d5bd0; /* warm violet — personal, not clinical */
+  --older: #d9772b; /* warm amber = older brain */
+  --younger: #12897f; /* teal = younger brain */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Number inputs: hide spinners for a cleaner look */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl bg-white border border-[var(--line)] shadow-[0_1px_2px_rgba(31,36,48,0.04),0_10px_30px_-14px_rgba(31,36,48,0.12)];
+  }
+  .field-label {
+    @apply block text-sm font-medium text-[var(--ink)];
+  }
+  .field-help {
+    @apply mt-0.5 text-xs text-[var(--ink-soft)] leading-snug;
+  }
+  .field-input {
+    @apply mt-1.5 w-full rounded-lg border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-[var(--ink)]
+      outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(109,91,208,0.2)];
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold
+      text-white transition hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-lg border border-[var(--line)] bg-white px-4 py-2 text-sm
+      font-medium text-[var(--ink)] transition hover:bg-[var(--bg)];
   }
 }
