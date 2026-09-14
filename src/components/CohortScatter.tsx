@@ -77,10 +77,10 @@ export default function CohortScatter({ userPoint, batchPoints, height = 380 }: 
         <YAxis
           type="number"
           dataKey="predicted_age"
-          name="Predicted brain age"
+          name="Illustrative output"
           domain={["dataMin - 2", "dataMax + 2"]}
           tick={{ fontSize: 12, fill: "#5b6472" }}
-          label={{ value: "Predicted brain age (years)", angle: -90, position: "insideLeft", offset: 18, fontSize: 12, fill: "#5b6472" }}
+          label={{ value: "Illustrative output (years)", angle: -90, position: "insideLeft", offset: 18, fontSize: 12, fill: "#5b6472" }}
         />
         <ZAxis range={[36, 36]} />
         <Tooltip
@@ -121,7 +121,7 @@ export default function CohortScatter({ userPoint, batchPoints, height = 380 }: 
 
         {userPoint && (
           <Scatter
-            name="You"
+            name="Example input"
             data={[userPoint]}
             shape={<StarShape />}
             legendType="star"

@@ -67,7 +67,7 @@ export default function GroupBoxplot({ groups, height = 320 }: Props) {
   for (let t = Math.ceil(yMin / step) * step; t <= yMax; t += step) ticks.push(Math.round(t));
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ maxHeight: height }} role="img" aria-label="Boxplot of brain-age gap by group">
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ maxHeight: height }} role="img" aria-label="Boxplot of output minus age by group">
       {/* gridlines + y ticks */}
       {ticks.map((t) => (
         <g key={t}>
@@ -81,12 +81,12 @@ export default function GroupBoxplot({ groups, height = 320 }: Props) {
       )}
       {/* axis label */}
       <text x={16} y={padT + plotH / 2} fontSize={12} fill="#5b6472" transform={`rotate(-90 16 ${padT + plotH / 2})`} textAnchor="middle">
-        Brain-age gap (years)
+        Output minus age (years)
       </text>
 
       {boxes.map((b, i) => {
         const cx = padL + slot * i + slot / 2;
-        const color = groupColor(b.group);
+        const color = groupColor();
         if (!b.s) {
           return (
             <text key={b.group} x={cx} y={padT + plotH / 2} textAnchor="middle" fontSize={12} fill="#9aa2b1">no rows</text>

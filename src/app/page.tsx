@@ -16,13 +16,11 @@ export default function Home() {
       {/* Hero */}
       <header className="mx-auto max-w-6xl px-5 pt-12 pb-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-white px-3 py-1 text-xs font-medium text-[var(--ink-soft)]">
-          <span aria-hidden>🧠</span> A portfolio science toy — honest about its limits
+          <span aria-hidden>🧠</span> Illustrative arithmetic demo · unverified coefficients
         </div>
-        <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Brain-Age Clock</h1>
+        <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Brain-Age Clock · Demo</h1>
         <p className="mt-3 max-w-2xl text-lg text-[var(--ink-soft)]">
-          Estimate a &ldquo;brain age&rdquo; from structural-MRI brain volumetrics and see how it compares to your real
-          age — the <span className="font-medium text-[var(--ink)]">brain-age gap</span>. Built on a Ridge model
-          validated against the OASIS-2 research cohort.
+          Explore how a fixed linear equation responds to example MRI-derived inputs. Its coefficients have no reproducible training or evaluation record. Outputs are illustrative numbers, not estimates of brain health or biological age.
         </p>
       </header>
 
@@ -30,7 +28,7 @@ export default function Home() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="inline-flex rounded-xl border border-[var(--line)] bg-white p-1">
           <TabButton active={tab === "calculator"} onClick={() => setTab("calculator")}>
-            Single calculator
+            Single example
           </TabButton>
           <TabButton active={tab === "batch"} onClick={() => setTab("batch")}>
             Batch upload

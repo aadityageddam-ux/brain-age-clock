@@ -96,6 +96,15 @@ export function scoreBatch(rows: Record<string, string>[]): BatchResult {
         bad = `non-numeric ${name} ("${val}")`;
         break;
       }
+      const bounds: Record<string, [number, number]> = {
+        age: [18, 120], eTIV: [800, 2200], nWBV: [0.5, 0.9],
+        ASF: [0.7, 1.8], educ: [0, 30], ses: [1, 5],
+      };
+      const [min, max] = bounds[name];
+      if (n < min || n > max) {
+        bad = `${name} outside demo range [${min}, ${max}]`;
+        break;
+      }
       nums[name] = n;
     }
 
@@ -131,16 +140,20 @@ export function scoreBatch(rows: Record<string, string>[]): BatchResult {
   return { scored, errors, totalRows: rows.length, hasGroup, missingColumns };
 }
 
-/** Build a results CSV: original columns + predicted_age + brain_age_gap. */
+/** Preserve original columns and label every new value as illustrative. */
 export function buildResultsCsv(result: BatchResult): string {
   if (result.scored.length === 0) return "";
-  const originalCols = Object.keys(result.scored[0].original);
-  const cols = [...originalCols, "predicted_age", "brain_age_gap"];
-  const escape = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
-  const lines = [cols.join(",")];
+  const reserved = new Set(["illustrative_output_year_scale", "illustrative_output_minus_age", "model_status"]);
+  const originalCols = Object.keys(result.scored[0].original).filter((c) => !reserved.has(c.toLowerCase().trim()));
+  const cols = [...originalCols, "illustrative_output_year_scale", "illustrative_output_minus_age", "model_status"];
+  const escape = (v: string) => {
+    const safe = /^[\s]*[=+\-@]/.test(v) ? `'${v}` : v;
+    return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+  };
+  const lines = [cols.map(escape).join(",")];
   for (const r of result.scored) {
     const vals = originalCols.map((c) => escape(String(r.original[c] ?? "")));
-    vals.push(String(r.predicted_age), String(r.brain_age_gap));
+    vals.push(String(r.predicted_age), String(r.brain_age_gap), "unverified_illustrative_only");
     lines.push(vals.join(","));
   }
   return lines.join("\n");
@@ -148,6 +161,6 @@ export function buildResultsCsv(result: BatchResult): string {
 
 /** Fabricated (non-cohort) example rows for the downloadable template. */
 export const TEMPLATE_CSV = `age,sex,educ,ses,eTIV,nWBV,ASF,group
-72,F,16,3,1420,0.735,1.190,Nondemented
-68,M,12,2,1510,0.702,1.120,Demented
-80,F,14,4,1380,0.688,1.240,Converted`;
+72,F,16,3,1420,0.735,1.190,Example A
+68,M,12,2,1510,0.702,1.120,Example B
+80,F,14,4,1380,0.688,1.240,Example A`;

@@ -31,7 +31,7 @@ export interface PredictionResult {
 
 /**
  * Standardize each feature, apply Ridge coefficients, add intercept.
- * Mirrors the notebook exactly:
+ * Arithmetic only; the original training notebook and evaluation are unavailable:
  *   standardized = (raw - mean) / scale
  *   predicted    = intercept + sum(coef_i * standardized_i)
  *   gap          = predicted - chronological_age
@@ -53,26 +53,6 @@ export function predictBrainAge(
   const round1 = (n: number) => Math.round(n * 10) / 10;
   const predictedR = round1(predicted);
   return { predicted: predictedR, gap: round1(predicted - age) };
-}
-
-/** Plain-English, non-clinical interpretation of a brain-age gap. */
-export function interpretGap(gap: number): { tone: "older" | "younger" | "typical"; text: string } {
-  if (gap >= 2) {
-    return {
-      tone: "older",
-      text: `Your brain structure appears substantially older than your chronological age (gap: ${formatGap(gap)} years).`,
-    };
-  }
-  if (gap <= -2) {
-    return {
-      tone: "younger",
-      text: `Your brain structure appears substantially younger than your chronological age (gap: ${formatGap(gap)} years).`,
-    };
-  }
-  return {
-    tone: "typical",
-    text: `Your brain structure appears close to what the model expects for your chronological age (gap: ${formatGap(gap)} years).`,
-  };
 }
 
 /** Format a gap with an explicit +/- sign, e.g. +6.3 or −13.6 (true minus glyph). */
