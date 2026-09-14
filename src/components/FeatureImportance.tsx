@@ -21,14 +21,13 @@ export default function FeatureImportance() {
   return (
     <div className="space-y-2.5">
       <p className="text-sm text-[var(--ink-soft)]">
-        Effect on predicted age when each feature increases by one standard deviation (Ridge coefficients on
-        standardized inputs). Bars left of center push the prediction younger; bars right push it older.
+        Change in illustrative output for a one-unit increase after scaling by the retained constants. Left lowers the number; right raises it. The scaling constants and coefficients are unverified, and these are not causal effects.
       </p>
       <div className="mt-2 space-y-2">
         {entries.map((e) => {
           const pct = (Math.abs(e.value) / maxAbs) * 50; // half-width max
           const positive = e.value >= 0;
-          const color = positive ? "var(--older)" : "var(--younger)";
+          const color = "var(--accent)";
           return (
             <div key={e.key} className="grid grid-cols-[minmax(120px,1.2fr)_minmax(0,2fr)_auto] items-center gap-3">
               <div className="text-sm text-[var(--ink)] truncate">{e.label}</div>

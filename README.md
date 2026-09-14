@@ -1,63 +1,50 @@
-# Brain-Age Clock
+# Brain-Age Clock · Illustrative Demo
 
-A browser-based calculator that estimates a "brain age" and brain-age gap from structural-MRI-derived brain volumetrics, using a Ridge regression model referenced against the OASIS-2 research cohort.
+[Open the demo](https://brain-age-clock.vercel.app/)
 
-**Live app:** [brain-age-clock.vercel.app](https://brain-age-clock.vercel.app)
+An exploratory interface for inspecting a fixed linear equation with **unverified coefficients**. It does not provide validated brain-age estimates or assess brain health.
 
-> For educational / exploratory use only. This is **not** a diagnostic tool and gives no medical advice.
+## Evidence status
 
-## What it does
+No training script, subject-separated split manifest, or evaluation report is available for the retained parameters. Accuracy and generalization are unknown. The previously displayed MAE, R², group comparisons, and personal older/younger interpretations have been withdrawn because their provenance could not be substantiated. Their removal is not proof that those historical numbers were false.
 
-**1. Calculator** — Enter age, sex, education, socioeconomic status, and three structural-MRI measurements (eTIV, nWBV, ASF). Get back a predicted brain age, the gap versus your chronological age, a plain-English interpretation, and a scatter plot showing where you land against the 438-session reference cohort.
+The old bundled cohort had conflicting descriptions (OASIS data versus synthetic stand-ins). It is removed from the current app. Background plots now use 12 explicitly fabricated rows generated in `src/lib/cohort.ts`, with no clinical groups. These examples are not OASIS data or an empirical reference distribution.
 
-**2. Batch upload** — Upload a CSV of multiple people at once. The app validates columns, flags malformed rows by number (never silently drops them), scores everyone, and renders a scatter plot, a gap-distribution histogram, and (if a `group` column is present) a boxplot by group. Results are downloadable as CSV.
+## What it demonstrates
 
-**3. Model transparency** — A collapsible panel showing the Ridge model's feature-importance coefficients, validation metrics (MAE, R²), and an honest note on where the model's group-separation story does and doesn't hold up in the bundled reference data.
-
-Everything runs client-side. No data is stored or transmitted anywhere.
-
-## Tech stack
-
-- **Next.js 14** (App Router) + **TypeScript**
-- **Tailwind CSS** for styling
-- **Recharts** for the scatter plot and histogram; a hand-rolled SVG boxplot (Recharts has no built-in primitive)
-- **PapaParse** for client-side CSV parsing
-- Deployed to **Vercel** as a fully static site — no backend, no database
-
-## How the prediction works
+- Single-example arithmetic and plots with neutral output labels.
+- Local CSV parsing, explicit errors, descriptive group plots, and downloads.
+- Transparent coefficients and scaling constants, without claims of validated feature importance.
 
 ```
-standardized_feature = (raw_value - scaler_mean) / scaler_scale
-predicted_age         = intercept + Σ(coefficient_i × standardized_feature_i)
-brain_age_gap          = predicted_age - chronological_age
+scaled_input = (value - retained_mean) / retained_scale
+illustrative_output = intercept + sum(coefficient * scaled_input)
+illustrative_difference = illustrative_output - input_age
 ```
 
-Model parameters (intercept, per-feature coefficients, scaler mean/scale, validation metrics) live in [`src/data/model_params.json`](src/data/model_params.json). The prediction logic is in [`src/lib/model.ts`](src/lib/model.ts).
+The year scale is inherited from the old equation, not empirically calibrated here. Age is used only in the difference. Zero difference has no validated meaning. Tests establish implementation behavior, not biological validity.
 
-## Data notes
+## Inputs and exports
 
-The bundled reference cohort ([`src/data/reference_cohort.json`](src/data/reference_cohort.json), 438 sessions across 150 subjects) ships raw demographic and volumetric columns only. Every cohort point's `predicted_age` and `brain_age_gap` are computed **at load time** by [`src/lib/cohort.ts`](src/lib/cohort.ts) using the same model as the calculator — this keeps the cohort scatter, the batch-upload overlay, and your single-entry result on one consistent scale.
+Use fabricated examples, not personal reports. Columns: `age,sex,educ,ses,eTIV,nWBV,ASF`; optional `group`. `sex` accepts M/F, male/female, 1/0; `Sex_M` is an alternative header. eTIV uses **cm³ (mL)**, nWBV uses a fraction (0.74, not 74), and ASF is unitless. SES uses 1 = highest through 5 = lowest, following the [OASIS-2 publication, Table 4](https://pmc.ncbi.nlm.nih.gov/articles/PMC2895005/). This coding reference is not evidence that the retained coefficients were trained on OASIS.
 
-The transparency panel reports validation metrics (mean gap by group, MAE, R²) as provided with the model rather than recomputed from the bundled cohort, since the small reference sample doesn't reproduce those figures exactly — this is called out directly in the app.
+Exports label new values `illustrative_output_year_scale`, `illustrative_output_minus_age`, and `model_status=unverified_illustrative_only`. No personal interpretation or performance estimate is exported.
 
-## Local development
+## Run and verify
 
-```bash
-npm install
+Requires Node.js 22 or later.
+
+```sh
+npm ci
+npm test
+npm run type-check
+npm run lint
+npm run build
 npm run dev
 ```
 
-Runs at `http://localhost:3000`.
+Open http://localhost:3000. The production build is a static Next.js export. GitHub CI checks tests, types, lint, and build.
 
-```bash
-npm run build   # production build
-npm run lint    # eslint
-```
+## Privacy and license
 
-## Attribution
-
-Data provided by OASIS: Cross-Sectional: Principal Investigators: D. Marcus, R. Buckner, J. Csernansky, J. Morris; P50 AG05681, P01 AG03991, P01 AG026276, R01 AG021910, P20 MH071616, U24 RR021382.
-
-## License
-
-[MIT](LICENSE)
+Entered values and CSV contents are processed in browser memory; the application does not upload them or persist them to a database. Downloads are saved when requested. Hosting still receives ordinary page requests. Source code is [MIT licensed](LICENSE). No OASIS participant data is included in this version; historical files remain in Git history.

@@ -59,13 +59,13 @@ export default function GapHistogram({ batchGaps, height = 320 }: Props) {
           type="number"
           domain={[min, max]}
           tick={{ fontSize: 12, fill: "#5b6472" }}
-          label={{ value: "Brain-age gap (years)", position: "bottom", offset: 6, fontSize: 12, fill: "#5b6472" }}
+          label={{ value: "Output minus age (years)", position: "bottom", offset: 6, fontSize: 12, fill: "#5b6472" }}
         />
         <YAxis tick={{ fontSize: 12, fill: "#5b6472" }} label={{ value: "Count", angle: -90, position: "insideLeft", fontSize: 12, fill: "#5b6472" }} />
         <Tooltip contentStyle={{ borderRadius: 10, border: "1px solid #e7e1d6", fontSize: 12 }} labelFormatter={(v) => `gap ≈ ${v} yrs`} />
         <Legend verticalAlign="top" height={30} wrapperStyle={{ fontSize: 12 }} />
         <ReferenceLine x={0} stroke="#9aa2b1" strokeDasharray="4 4" />
-        <Bar dataKey="reference" name="Reference cohort" fill="#c9c1b3" />
+        <Bar dataKey="reference" name="Synthetic examples" fill="#c9c1b3" />
         <Bar dataKey="uploaded" name="Uploaded batch" fill="#6d5bd0" />
       </BarChart>
     </ResponsiveContainer>

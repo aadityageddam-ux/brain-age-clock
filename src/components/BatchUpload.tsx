@@ -44,6 +44,10 @@ export default function BatchUpload() {
           setParseError("The file is empty or has no data rows.");
           return;
         }
+        if (res.errors.length > 0) {
+          setParseError(`Malformed CSV: ${res.errors.map((e) => e.message).join("; ")}. No rows calculated.`);
+          return;
+        }
         setResult(scoreBatch(res.data));
       },
       error: (err) => {
@@ -70,16 +74,16 @@ export default function BatchUpload() {
           <div>
             <h2 className="text-lg font-semibold">Batch upload</h2>
             <p className="mt-1 text-sm text-[var(--ink-soft)] max-w-xl">
-              Upload a CSV with one row per person. Required columns:{" "}
+              Upload a CSV with one row per fabricated example. Required columns:{" "}
               <code className="rounded bg-[var(--bg)] px-1 py-0.5 text-[13px]">{REQUIRED_COLUMNS.join(", ")}</code>.
               An optional <code className="rounded bg-[var(--bg)] px-1 py-0.5 text-[13px]">group</code> column enables the boxplot.
-              Nothing leaves your browser.
+              File contents are processed locally. Use fabricated examples only; outputs are unverified arithmetic.
             </p>
           </div>
           <button
             type="button"
             className="btn-ghost"
-            onClick={() => download("brain_age_template.csv", TEMPLATE_CSV)}
+            onClick={() => download("synthetic_demo_template.csv", TEMPLATE_CSV)}
           >
             Download template CSV
           </button>
@@ -128,7 +132,7 @@ export default function BatchUpload() {
                   type="button"
                   className="btn-primary"
                   disabled={scored.length === 0}
-                  onClick={() => download(`brain_age_results_${timestamp()}.csv`, buildResultsCsv(result))}
+                  onClick={() => download(`illustrative_demo_results_${timestamp()}.csv`, buildResultsCsv(result))}
                 >
                   Download results CSV
                 </button>
@@ -152,16 +156,16 @@ export default function BatchUpload() {
           {scored.length > 0 && (
             <>
               <div className="panel p-6">
-                <h3 className="font-semibold">Chronological vs. predicted age</h3>
-                <p className="mt-1 text-sm text-[var(--ink-soft)]">Your uploaded rows (dark triangles) over the reference cohort.</p>
+                <h3 className="font-semibold">Input age vs. illustrative output</h3>
+                <p className="mt-1 text-sm text-[var(--ink-soft)]">Your uploaded rows (dark triangles) over the synthetic examples.</p>
                 <div className="mt-3">
                   <CohortScatter batchPoints={batchPoints} height={400} />
                 </div>
               </div>
 
               <div className="panel p-6">
-                <h3 className="font-semibold">Brain-age gap distribution</h3>
-                <p className="mt-1 text-sm text-[var(--ink-soft)]">Uploaded batch overlaid on the reference cohort.</p>
+                <h3 className="font-semibold">Output minus age distribution</h3>
+                <p className="mt-1 text-sm text-[var(--ink-soft)]">Uploaded batch overlaid on the synthetic examples.</p>
                 <div className="mt-3">
                   <GapHistogram batchGaps={scored.map((r) => r.brain_age_gap)} />
                 </div>
@@ -169,7 +173,7 @@ export default function BatchUpload() {
 
               {result.hasGroup && gapsByGroup.length > 0 && (
                 <div className="panel p-6">
-                  <h3 className="font-semibold">Brain-age gap by group</h3>
+                  <h3 className="font-semibold">Output minus age by group</h3>
                   <p className="mt-1 text-sm text-[var(--ink-soft)]">Median gap per group in your upload.</p>
                   <div className="mt-3">
                     <GroupBoxplot groups={gapsByGroup} />
@@ -186,7 +190,7 @@ export default function BatchUpload() {
 
 function groupGaps(result: BatchResult | null): { group: string; gaps: number[] }[] {
   if (!result || !result.hasGroup) return [];
-  const order = ["Demented", "Converted", "Nondemented"];
+  const order: string[] = [];
   const map = new Map<string, number[]>();
   for (const r of result.scored) {
     const g = r.group || "Unlabeled";

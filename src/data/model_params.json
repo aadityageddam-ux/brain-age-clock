@@ -24,13 +24,5 @@
     "SES": 1.2,
     "Sex_M": 0.5
   },
-  "validation_metrics": {
-    "mae_years": 5.44,
-    "r_squared": 0.217,
-    "demented_mean_gap": 1.81,
-    "nondemented_mean_gap": -1.29,
-    "t_statistic": 4.18,
-    "p_value": 1e-05,
-    "note": "Converted group shows anomalous negative gap (-2.34 yrs) \u2014 likely pre-conversion scans dominate n=37"
-  }
+  "status": "unverified_illustrative_only"
 }
